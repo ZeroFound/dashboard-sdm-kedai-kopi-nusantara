@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM SDM Advanced Dashboard - Kedai Kopi Nusantara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="noise">
+    <!-- PARTICLES -->
+    <div class="particle-field" id="particleField"></div>
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <!-- SCROLL TO TOP -->
+    <button class="scroll-top" id="scrollTop" title="Scroll to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ===== UNIVERSITY BANNER ===== -->
+    <div class="univ-banner">
+        <div class="univ-banner-left">
+            <div class="univ-logo" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--secondary),#b8912e);padding:6px;font-size:22px;font-weight:800;color:#0a0f1a;">
+                <img src="image.png" alt="Logo UPN Veteran Yogyakarta" style="width:100%;height:100%;object-fit:contain;display:block;" onerror="this.parentElement.innerHTML='UPN'">
+            </div>
+            <div class="univ-info">
+                <h2>UNIVERSITAS PEMBANGUNAN NASIONAL "VETERAN" YOGYAKARTA</h2>
+                <p>Fakultas Ekonomi dan Bisnis · Program Studi Manajemen (S1)</p>
+                <div class="univ-team">
+                    <span><strong>Kelompok 5:</strong></span>
+                    <span>Rosalinda Diana Putri · 141230412</span>
+                    <span>Rahma Brillianti Kandila · 141230581</span>
+                    <span>Cynthia Aulia Noorrahmasari · 141230600</span>
+                    <span>Siti Syahriatul Mukharomah · 141230612</span>
+                </div>
+            </div>
+        </div>
+        <div class="univ-banner-right">
+            <div class="course-title">Tugas Proyek SIM SDM</div>
+            <div class="lecturer">Dosen Pengampu: <strong>R. Hendri Gusaptono, Drs., M.M.</strong></div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">YOGYAKARTA · 2026</div>
+        </div>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-icon">☕</div>
+            <div class="header-title">
+                <h1>SIM SDM Advanced</h1>
+                <p>Kedai Kopi Nusantara · Manajemen & Keuangan</p>
+            </div>
+        </div>
+        <div class="header-center">
+            <i class="fas fa-search"></i>
+            <input type="text" id="globalSearch" placeholder="Cari karyawan, jabatan, status..." autocomplete="off">
+        </div>
+        <div class="header-right">
+            <button class="header-btn alert-badge" id="alertBtn" title="Notifikasi">
+                <i class="fas fa-bell"></i>
+                <span class="badge-count" id="alertCount">0</span>
+            </button>
+            <button class="header-btn" id="themeToggle" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="header-btn" id="fullscreenToggle" title="Fullscreen">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="header-btn" id="exportBtn" title="Export Data (CSV)">
+                <i class="fas fa-download"></i>
+            </button>
+            <span class="live-clock" id="liveClock">⏱️ --:--</span>
+        </div>
+    </header>
+
+    <!-- ===== SUB HEADER ===== -->
+    <div class="sub-header">
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> Dashboard SDM</button>
+            <button class="nav-tab" data-tab="keuangan"><i class="fas fa-coins"></i> Keuangan</button>
+            <button class="nav-tab" data-tab="karyawan"><i class="fas fa-users"></i> Karyawan</button>
+            <button class="nav-tab" data-tab="absensi"><i class="fas fa-calendar-check"></i> Absensi</button>
+            <button class="nav-tab" data-tab="laporan"><i class="fas fa-file-alt"></i> Laporan</button>
+        </nav>
+        <div class="sub-header-right">
+            <select class="filter-select" id="yearFilter" title="Filter Tahun">
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
+            <button class="btn" onclick="resetData()" title="Reset ke data awal"><i class="fas fa-undo"></i> Reset</button>
+            <button class="btn btn-primary" onclick="addEmployee()"><i class="fas fa-plus"></i> Karyawan</button>
+            <button class="btn btn-primary" onclick="addAbsensi()"><i class="fas fa-plus"></i> Absensi</button>
+            <button class="btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+    </div>
+
+    <!-- ===== ALERT BANNER ===== -->
+    <div class="main-content" style="padding-bottom:0">
+        <div class="alert-banner" id="alertBanner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="alert-text" id="alertText"></div>
+            <button class="alert-close" id="alertClose">&times;</button>
+        </div>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main-content">
+
+        <!-- TAB: DASHBOARD SDM -->
+        <div class="tab-panel active" id="tab-dashboard">
+            <div class="kpi-grid" id="kpiDashboard"></div>
+            <div class="progress-section">
+                <div class="progress-grid" id="progressDashboard"></div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-briefcase"></i> Karyawan per Jabatan</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-bar"></i> Bar</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartJabatan"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-venus-mars"></i> Komposisi Gender</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-pie"></i> Pie</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartGender"></canvas></div>
+                </div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-clipboard-check"></i> Status Kehadiran</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-column"></i> Column</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartKehadiran"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-money-bill-trend-up"></i> Gaji per Jabatan</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-bar"></i> Bar</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartGajiJabatan"></canvas></div>
+                </div>
+            </div>
+            <div class="insight-card">
+                <h3><i class="fas fa-lightbulb"></i> Analisis Manajerial SDM</h3>
+                <ul class="insight-list">
+                    <li><span class="num">1</span> <strong>Kedisiplinan:</strong> Pantau karyawan dengan status Alpha. Evaluasi kedisiplinan secara berkala.</li>
+                    <li><span class="num">2</span> <strong>Tenaga Kerja:</strong> Distribusi jabatan merata. Evaluasi beban kerja untuk potensi penambahan staf.</li>
+                    <li><span class="num">3</span> <strong>Biaya Gaji:</strong> Pantau total gaji vs anggaran. Alokasi terbesar pada Barista dan Koki.</li>
+                    <li><span class="num">4</span> <strong>Keputusan Strategis:</strong> Dashboard siap untuk rekrutmen, penjadwalan, dan perencanaan anggaran.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB: KEUANGAN -->
+        <div class="tab-panel" id="tab-keuangan">
+            <div class="kpi-grid" id="kpiKeuangan"></div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-coins"></i> Total Gaji per Jabatan</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-bar"></i> Bar</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartKeuanganJabatan"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Proporsi Gaji per Jabatan</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-pie"></i> Pie</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartProporsiGaji"></canvas></div>
+                </div>
+            </div>
+            <div class="chart-card full-width" style="margin-bottom:20px;">
+                <div class="chart-header">
+                    <h3><i class="fas fa-users"></i> Perbandingan Gaji per Karyawan</h3>
+                    <span class="chart-badge"><i class="fas fa-chart-column"></i> Column</span>
+                </div>
+                <div class="chart-container" style="height:300px;"><canvas id="chartGajiKaryawan"></canvas></div>
+            </div>
+            <div class="insight-card">
+                <h3><i class="fas fa-chart-line"></i> Analisis Keuangan SDM</h3>
+                <ul class="insight-list">
+                    <li><span class="num">1</span> <strong>Total Beban Gaji:</strong> Estimasi biaya SDM per tahun.</li>
+                    <li><span class="num">2</span> <strong>Alokasi Tertinggi:</strong> Barista dan Koki — evaluasi kontribusi terhadap pendapatan.</li>
+                    <li><span class="num">3</span> <strong>Rata-rata Gaji:</strong> Standar kompetitif UMKM coffee shop.</li>
+                    <li><span class="num">4</span> <strong>Rekomendasi:</strong> Penyesuaian gaji berkala + bonus performa untuk retensi talenta.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB: KARYAWAN -->
+        <div class="tab-panel" id="tab-karyawan">
+            <div class="kpi-grid" id="kpiKaryawan"></div>
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <h3><i class="fas fa-users"></i> Data Karyawan <span class="count-badge" id="karyawanCount">0</span></h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <input type="text" class="table-search" id="searchKaryawan" placeholder="Cari nama/ID/jabatan...">
+                        <button class="btn btn-primary btn-sm" onclick="addEmployee()"><i class="fas fa-plus"></i> Tambah</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-col="id">ID <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="nama">Nama <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="kelamin">Jenis Kelamin <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="jabatan">Jabatan <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="tglMasuk">Tgl Masuk <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="status">Status <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="gaji">Gaji Pokok <i class="fas fa-sort"></i></th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableKaryawan"></tbody>
+                </table>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-briefcase"></i> Distribusi per Jabatan</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-bar"></i> Bar</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartKaryawanJabatan"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-venus-mars"></i> Komposisi Gender</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-pie"></i> Doughnut</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartKaryawanGender"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ABSENSI -->
+        <div class="tab-panel" id="tab-absensi">
+            <div class="kpi-grid" id="kpiAbsensi"></div>
+            <div class="table-card">
+                <div class="table-toolbar">
+                    <h3><i class="fas fa-calendar-check"></i> Rekap Absensi <span class="count-badge" id="absensiCount">0</span></h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <input type="text" class="table-search" id="searchAbsensi" placeholder="Cari nama/tanggal/status...">
+                        <button class="btn btn-primary btn-sm" onclick="addAbsensi()"><i class="fas fa-plus"></i> Tambah</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-col="tgl">Tanggal <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="id">ID <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="nama">Nama <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="jabatan">Jabatan <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="status">Status <i class="fas fa-sort"></i></th>
+                            <th>Keterangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableAbsensi"></tbody>
+                </table>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Statistik Kehadiran</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-pie"></i> Pie</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartAbsensiPie"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Tren Kehadiran per Hari</h3>
+                        <span class="chart-badge"><i class="fas fa-chart-bar"></i> Stacked</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartAbsensiHarian"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: LAPORAN -->
+        <div class="tab-panel" id="tab-laporan">
+            <div class="table-card" style="background: linear-gradient(135deg, rgba(212,168,67,0.04), var(--bg-card));">
+                <div class="table-toolbar">
+                    <h3><i class="fas fa-file-alt"></i> Laporan Manajerial SDM</h3>
+                    <button class="btn" id="printLaporan"><i class="fas fa-print"></i> Cetak</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th style="width:160px;">Indikator</th><th>Nilai</th><th>Keterangan</th></tr>
+                    </thead>
+                    <tbody id="tableLaporan"></tbody>
+                </table>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Ringkasan Visual SDM</h3>
+                        <span class="chart-badge">Overview</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartLaporanOverview"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Komposisi Status Karyawan</h3>
+                        <span class="chart-badge">Doughnut</span>
+                    </div>
+                    <div class="chart-container"><canvas id="chartLaporanStatus"></canvas></div>
+                </div>
+            </div>
+            <div class="insight-card">
+                <h3><i class="fas fa-list-check"></i> Kesimpulan & Rekomendasi</h3>
+                <ul class="insight-list" id="laporanKesimpulan"></ul>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
